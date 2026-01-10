@@ -1,23 +1,28 @@
-#base image
-FROM python:3.9
+FROM python:3.9-slim
 
-#wirking directory inside container 
-WORKDIR /app/backend
+ENV PYTHONUNBUFFERED=1
 
-#copy
+# Correct working directory
+WORKDIR /app
 
-COPY requirements.txt /app/backend
-
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y gcc default-libmysqlclient-dev pkg-config \
+# System dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-#install dependecies / requiremts
+# Copy requirements first
+COPY requirements.txt .
 
-RUN pip install mysqlclient
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app/backend
+# Copy project files
+COPY . .
 
-EXPOSE 8000	
+# Expose Django port
+EXPOSE 8000
+
+# Start Django app
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
