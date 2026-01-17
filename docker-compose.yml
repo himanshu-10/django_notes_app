@@ -35,8 +35,8 @@ services:
       start_period: 60s
 
   django:
-    web:
-      image: "him10/notes-app"
+    
+    image: "him10/notes-app"
     container_name: "django_cont"
     command: sh -c "python manage.py migrate --no-input && gunicorn notesapp.wsgi --bind 0.0.0.0:8000"
     ports:
